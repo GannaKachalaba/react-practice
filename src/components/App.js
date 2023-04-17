@@ -1,39 +1,22 @@
-import { useEffect, useState } from 'react';
-import { RecipeList } from './RecipeList/RecipeList';
-import { GlobalStyle } from './GlobalStyle';
-import { Layout } from './Layout/Layout';
-import initialRecipes from '../recipes.json';
-import { RecipeForm } from './RecipeForm/RecipeForm';
-
-const getInitialRecipes = () => {
-  const savedRecipes = localStorage.getItem('recipes');
-  if (savedRecipes !== null) {
-    const parsedRecipes = JSON.parse(savedRecipes);
-    return parsedRecipes;
-  }
-  return initialRecipes;
-};
+import { Route, Routes } from 'react-router-dom';
+import Home from 'pages/Home';
+import Dogs from 'pages/Dogs';
+import DogDetails from 'pages/DogDetails';
+import { Layout } from './Layout';
+import { Gallery } from './Gallery';
+import { SubBreeds } from './SubBreeds';
 
 export const App = () => {
-  const [recipes, setRecipes] = useState(getInitialRecipes);
-
-  useEffect(() => {
-    localStorage.setItem('recipes', JSON.stringify(recipes));
-  }, [recipes]);
-
-  const addRecipe = newRecipe => {
-    setRecipes(prevState => [...prevState.recipes, newRecipe]);
-  };
-
-  const deleteRecipe = recipeId => {
-    setRecipes(prevState => prevState.filter(recipe => recipe.id !== recipeId));
-  };
-
   return (
-    <Layout>
-      <RecipeForm onSave={addRecipe} />
-      <RecipeList items={recipes} onDelete={deleteRecipe} />
-      <GlobalStyle />
-    </Layout>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="dogs" element={<Dogs />} />
+        <Route path="dogs/:dogId" element={<DogDetails />}>
+          <Route path="subbreeds" element={<SubBreeds />} />
+          <Route path="gallery" element={<Gallery />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 };
